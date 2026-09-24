@@ -64,6 +64,12 @@ return toDomainDogs(dogToFind);
         return toDomainDogs(dogForUpdate);
 
     }
+    public List<DogDTO> findByBreed(String breed) {
+        List<DogDTO> founded = repository.findByBreed(breed).stream()
+                .map(it -> toDomainDogs(it))
+                .toList();
+        return founded;
+    }
 
     private DogDTO toDomainDogs(DogEntity dog) {
         return new DogDTO(
@@ -75,6 +81,7 @@ return toDomainDogs(dogToFind);
 
         );
     }
+
 
 
 

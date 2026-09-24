@@ -16,7 +16,13 @@ public class DogController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DogDTO>> findAllDogs() {
+    public ResponseEntity<List<DogDTO>> findAllDogs(
+            @RequestParam(required = false) String breed
+    ) {
+         if(breed != null) {
+             return ResponseEntity.status(200)
+                     .body(dogService.findByBreed(breed));
+         }
         return ResponseEntity.ok(dogService.findAll());
 }
 @PostMapping("/add")
