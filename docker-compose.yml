@@ -3,7 +3,7 @@ services:
     image: postgres:18
     container_name: dogsw-postgres
     environment:
-      POSTGRES_DB: dogsw
+      POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
     ports:
