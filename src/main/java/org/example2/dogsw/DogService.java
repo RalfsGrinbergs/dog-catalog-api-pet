@@ -18,7 +18,7 @@ private final DogRepository repository;
         return allEntities.stream()
                 .map(it -> toDomainDogs(it)).toList();
     }
-    public DogDTO FindById(Long id) {
+    public DogDTO findById(Long id) {
         DogEntity dogToFind =  repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("There is not dog with id: " +id));
 return toDomainDogs(dogToFind);
