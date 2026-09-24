@@ -1,6 +1,7 @@
 package org.example2.dogsw;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class DogController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DogDTO>> findAllDogs(
+    public ResponseEntity<List<DogDTO>> findAll(
             @RequestParam(required = false) String breed
     ) {
          if(breed != null) {
@@ -25,19 +26,20 @@ public class DogController {
          }
         return ResponseEntity.ok(dogService.findAll());
 }
-@PostMapping("/add")
-    public ResponseEntity<DogDTO> addDog(@RequestBody DogDTO dogToAdd) {
-        return ResponseEntity.status(201)
-                .body(dogService.addDog(dogToAdd));
-}
-@GetMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<DogDTO> findById(@PathVariable("id") Long id) {
 
         return ResponseEntity.status(200)
                 .body(dogService.findById(id));
 
 
+    }
+@PostMapping
+    public ResponseEntity<DogDTO> addDog(@Valid @RequestBody DogDTO dogToAdd) {
+        return ResponseEntity.status(201)
+                .body(dogService.addDog(dogToAdd));
 }
+
 @DeleteMapping("/{id}")
     public ResponseEntity<DogDTO> deleteDog(@PathVariable("id") Long id) {
             return ResponseEntity.status(200)
@@ -46,7 +48,7 @@ public class DogController {
 }
 @PatchMapping("/{id}")
     public ResponseEntity<DogDTO> updateDog(@PathVariable("id") Long id,
-                                                    @RequestBody PatchingDogDTO updatingDog) {
+                                                  @Valid  @RequestBody PatchingDogDTO updatingDog) {
             return ResponseEntity.status(200)
                     .body(dogService.updateDog(id, updatingDog));
 

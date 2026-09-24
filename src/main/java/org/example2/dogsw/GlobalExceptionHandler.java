@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -12,11 +13,18 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> EntityNotFound( EntityNotFoundException e) {
+    public ResponseEntity<String> entityNotFound( EntityNotFoundException e) {
         log.error("Handle excpetion", e);
 
         return ResponseEntity
                 .status(404)
                 .body(e.getMessage());
+    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> notValid(MethodArgumentNotValidException e) {
+        log.error("Handle exception", e);
+        return ResponseEntity
+                .status(400)
+                .body("Invalid data");
     }
 }
