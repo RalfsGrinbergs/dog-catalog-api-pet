@@ -1,6 +1,6 @@
 package dogs_catalog.service;
 
-import dogs_catalog.DogRepository;
+import dogs_catalog.repository.DogRepository;
 import dogs_catalog.dto.DogDTO;
 import dogs_catalog.dto.PatchingDogDTO;
 import dogs_catalog.entity.DogEntity;

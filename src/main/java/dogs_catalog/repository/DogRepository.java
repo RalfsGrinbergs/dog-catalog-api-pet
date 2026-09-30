@@ -1,4 +1,4 @@
-package dogs_catalog;
+package dogs_catalog.repository;
 
 import dogs_catalog.entity.DogEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
