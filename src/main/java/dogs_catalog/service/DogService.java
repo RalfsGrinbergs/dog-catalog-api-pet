@@ -1,5 +1,9 @@
-package org.example2.dogsw;
+package dogs_catalog.service;
 
+import dogs_catalog.DogRepository;
+import dogs_catalog.dto.DogDTO;
+import dogs_catalog.dto.PatchingDogDTO;
+import dogs_catalog.entity.DogEntity;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;

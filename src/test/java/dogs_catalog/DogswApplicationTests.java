@@ -1,4 +1,4 @@
-package org.example2.dogsw;
+package dogs_catalog;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

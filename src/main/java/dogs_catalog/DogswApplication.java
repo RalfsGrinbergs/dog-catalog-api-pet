@@ -1,4 +1,4 @@
-package org.example2.dogsw;
+package dogs_catalog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,5 +1,8 @@
-package org.example2.dogsw;
+package dogs_catalog.controller;
 
+import dogs_catalog.dto.DogDTO;
+import dogs_catalog.service.DogService;
+import dogs_catalog.dto.PatchingDogDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

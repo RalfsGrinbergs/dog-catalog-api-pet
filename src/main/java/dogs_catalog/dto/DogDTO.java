@@ -1,4 +1,4 @@
-package org.example2.dogsw;
+package dogs_catalog.dto;
 
 
 import jakarta.validation.constraints.Min;

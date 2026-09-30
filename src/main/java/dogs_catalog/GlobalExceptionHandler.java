@@ -1,4 +1,4 @@
-package org.example2.dogsw;
+package dogs_catalog;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;

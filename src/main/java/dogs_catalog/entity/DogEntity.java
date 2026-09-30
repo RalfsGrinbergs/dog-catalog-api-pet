@@ -1,4 +1,4 @@
-package org.example2.dogsw;
+package dogs_catalog.entity;
 
 import jakarta.persistence.*;
 
@@ -17,6 +17,9 @@ public class DogEntity {
     private int age;
     @Column(name = "weight")
     private double weight;
+    @ManyToOne
+    @JoinColumn(name = "OwnerId", referencedColumnName = "id")
+    private OwnerEntity ownerEntity;
     public void setId(Long id) {
         this.id = id;
     }
@@ -66,5 +69,13 @@ public class DogEntity {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public OwnerEntity getOwnerEntity() {
+        return ownerEntity;
+    }
+
+    public void setOwnerEntity(OwnerEntity ownerEntity) {
+        this.ownerEntity = ownerEntity;
     }
 }
