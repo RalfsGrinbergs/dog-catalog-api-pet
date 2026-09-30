@@ -76,7 +76,8 @@ public class OwnerService {
                 dog.getName(),
                 dog.getBreed(),
                 dog.getAge(),
-                dog.getWeight()
+                dog.getWeight(),
+                dog.getOwnerEntity() == null ? null : dog.getOwnerEntity().getId()
         );
     }
 }
