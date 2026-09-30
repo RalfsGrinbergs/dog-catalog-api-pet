@@ -6,7 +6,9 @@ public record OwnerDTO(
 
         Long id,
         @NotBlank
-        String name
+        String name,
+
+        long dogsCount
 )
 {
 

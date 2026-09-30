@@ -2,6 +2,7 @@ package dogs_catalog.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,8 +13,8 @@ public class OwnerEntity {
     private Long id;
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "ownerEntity", fetch = FetchType.LAZY)
-    private List<DogEntity> dogEntity;
+    @OneToMany(mappedBy = "ownerEntity", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<DogEntity> dogEntity = new ArrayList<>(); // i dont want a nullpointer
 
     public void setId(Long id) {
         this.id = id;

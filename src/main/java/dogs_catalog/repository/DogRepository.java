@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface DogRepository extends JpaRepository<DogEntity, Long> {
     List<DogEntity> findByBreed(String breed);
+    long countByOwnerEntity_Id(Long ownerId);
+    List<DogEntity> findAllByOwnerEntity_Id(Long ownerId);
 }
