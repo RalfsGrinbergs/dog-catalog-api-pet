@@ -8,7 +8,7 @@ public record OwnerDTO(
         @NotBlank
         String name,
 
-        long dogsCount
+        Long dogsCount
 )
 {
 

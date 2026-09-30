@@ -43,14 +43,13 @@ public class OwnerService {
 
     }
     @Transactional
-    public OwnerDTO deleteOwner(Long id) {
+    public void deleteOwner(Long id) {
         OwnerEntity ownerToDelete = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("There is not owner with that id" + id));
         repository.delete(ownerToDelete);
-        return toDomainOwner(ownerToDelete);
 
     }
-    @Transactional // for eager
+    @Transactional // keeps the lazy dogs accessible
     public List<DogDTO> findOwnerDogs(Long id) {
         OwnerEntity ownerToFindDogs = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("There is not owner with that id " + id));
@@ -61,7 +60,7 @@ public class OwnerService {
 
     }
     private OwnerDTO toDomainOwner(OwnerEntity owner) {
-        long dogsCount = dogRepository.countByOwnerEntity_Id(owner.getId());
+        long dogsCount = dogRepository.countByOwnerEntity_Id(owner.getId()); // next time fix N+1
         return new OwnerDTO(
                 owner.getId(),
                 owner.getName(),

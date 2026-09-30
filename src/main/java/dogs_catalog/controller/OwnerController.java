@@ -38,7 +38,7 @@ public class OwnerController {
 
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<OwnerDTO> deleteOwner(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteOwner(@PathVariable("id") Long id) {
         ownerService.deleteOwner(id);
         return ResponseEntity.noContent().build();
 
