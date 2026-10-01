@@ -12,6 +12,8 @@ A REST API for managing dogs and their owners. This personal project was created
 - PostgreSQL
 - Maven
 - Docker
+- JUnit
+- Mockito
 
 ## Features
 
@@ -19,7 +21,8 @@ A REST API for managing dogs and their owners. This personal project was created
 - Get a dog by ID
 - Find dogs by breed
 - Add a dog and assign it to an owner
-- Update a dog with `PATCH`
+- Limit each owner to a maximum of five dogs
+- Partially update a dog with `PATCH`
 - Delete a dog
 - Create and delete owners
 - Get all owners or an owner by ID
@@ -27,10 +30,11 @@ A REST API for managing dogs and their owners. This personal project was created
 - Get an owner’s dog count
 - Request validation
 - Global exception handling
+- Unit tests for service logic
 
 ## Data model
 
-An owner can have zero or more dogs. Each dog must belong to an existing owner.
+An owner can have zero or more dogs. Each dog must belong to an existing owner, and an owner can have no more than five dogs.
 
 The relationship is stored through a foreign key in the `Dogs` table. The owner’s `dogsCount` is calculated from the dogs in the database; it is not stored as a separate database column.
 
@@ -116,6 +120,8 @@ Example response:
 }
 ```
 
+If the owner already has five dogs, adding another dog returns HTTP `409 Conflict`.
+
 ### Get an owner and their dog count
 
 ```http
@@ -174,13 +180,30 @@ When creating a dog:
 - `age` must be zero or greater.
 - `weight` must be greater than zero.
 - `ownerId` is required and must refer to an existing owner.
+- The owner must have fewer than five dogs.
 
 When patching a dog:
 
 - `age`, if provided, must be zero or greater.
 - `weight`, if provided, must be greater than zero.
 
-Invalid data returns HTTP `400 Bad Request`. If a requested dog or owner does not exist, the API returns HTTP `404 Not Found`.
+Invalid data returns HTTP `400 Bad Request`. If a requested dog or owner does not exist, the API returns HTTP `404 Not Found`. Trying to add a sixth dog to an owner returns HTTP `409 Conflict`.
+
+## Tests
+
+The project includes service-level unit tests using JUnit and Mockito. They cover dog creation when the owner has reached the five-dog limit, successful dog creation below the limit, and finding an owner by ID.
+
+Run the tests with Maven:
+
+```bash
+mvn test
+```
+
+On Windows, if the Maven wrapper is present:
+
+```bash
+mvnw.cmd test
+```
 
 ## Project structure
 
@@ -196,6 +219,8 @@ src/main/java/dogs_catalog
 ├── entity
 │   ├── DogEntity.java
 │   └── OwnerEntity.java
+├── exception
+│   └── OwnerDogLimitExceededException.java
 ├── repository
 │   ├── DogRepository.java
 │   └── OwnerRepository.java
@@ -204,6 +229,10 @@ src/main/java/dogs_catalog
 │   └── OwnerService.java
 ├── DogswApplication.java
 └── GlobalExceptionHandler.java
+
+src/test/java/dogs_catalog/service
+├── DogServiceTest.java
+└── OwnerServiceTest.java
 ```
 
 ### Main components
@@ -213,7 +242,7 @@ src/main/java/dogs_catalog
 - **Repositories** use Spring Data JPA to access the database.
 - **Entities** represent the `Dogs` and `Owners` tables.
 - **DTOs** define the data accepted and returned by the API.
-- **GlobalExceptionHandler** handles validation errors and missing resources.
+- **GlobalExceptionHandler** handles validation errors, missing resources, and the owner dog limit.
 
 ## Database
 
