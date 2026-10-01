@@ -1,87 +1,149 @@
 # Dog Catalog API
 
-A simple REST API for managing a dog catalog.
-
-The project was created as a personal pet project to practice Java backend development with Spring Boot, Spring Web, Spring Data JPA, Hibernate and PostgreSQL.
+A REST API for managing dogs and their owners. This personal project was created to practice Java backend development with Spring Boot, Spring Data JPA, Hibernate, and PostgreSQL.
 
 ## Technologies
 
-* Java 17
-* Spring Boot
-* Spring Web
-* Spring Data JPA
-* Hibernate
-* PostgreSQL
-* Maven
-* Docker
+- Java 17
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+- Maven
+- Docker
 
 ## Features
 
-* Get all dogs
-* Get a dog by ID
-* Find dogs by breed
-* Add a new dog
-* Update an existing dog
-* Delete a dog
-* Request validation
-* Global exception handling
+- Get all dogs
+- Get a dog by ID
+- Find dogs by breed
+- Add a dog and assign it to an owner
+- Update a dog with `PATCH`
+- Delete a dog
+- Create and delete owners
+- Get all owners or an owner by ID
+- Get all dogs belonging to an owner
+- Get an owner’s dog count
+- Request validation
+- Global exception handling
+
+## Data model
+
+An owner can have zero or more dogs. Each dog must belong to an existing owner.
+
+The relationship is stored through a foreign key in the `Dogs` table. The owner’s `dogsCount` is calculated from the dogs in the database; it is not stored as a separate database column.
+
+Deleting an owner also deletes that owner’s dogs.
 
 ## API Endpoints
 
-### Get all dogs
+### Dogs
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/dogs` | Get all dogs |
+| `GET` | `/dogs?breed=Labrador` | Find dogs by breed |
+| `GET` | `/dogs/{id}` | Get a dog by ID |
+| `POST` | `/dogs` | Add a dog and assign it to an owner |
+| `PATCH` | `/dogs/{id}` | Partially update a dog |
+| `DELETE` | `/dogs/{id}` | Delete a dog |
+
+### Owners
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/owners` | Get all owners |
+| `GET` | `/owners/{id}` | Get an owner, including their dog count |
+| `GET` | `/owners/{id}/dogs` | Get all dogs belonging to an owner |
+| `POST` | `/owners` | Create an owner |
+| `DELETE` | `/owners/{id}` | Delete an owner and their dogs |
+
+## Example requests
+
+### Add an owner
 
 ```http
-GET /dogs
+POST /owners
+Content-Type: application/json
 ```
 
-Returns all dogs.
-
-### Get dogs by breed
-
-```http
-GET /dogs?breed=Labrador
+```json
+{
+  "name": "Alex Morgan"
+}
 ```
 
-Returns all dogs with the specified breed.
+The response includes the generated ID and the current dog count:
 
-### Get dog by ID
-
-```http
-GET /dogs/{id}
-```
-
-Example:
-
-```http
-GET /dogs/1
+```json
+{
+  "id": 1,
+  "name": "Alex Morgan",
+  "dogsCount": 0
+}
 ```
 
 ### Add a dog
 
+A dog must be assigned to an existing owner. Use the owner ID returned by `POST /owners`.
+
 ```http
 POST /dogs
+Content-Type: application/json
 ```
-
-Example request body:
 
 ```json
 {
   "name": "Max",
   "breed": "Labrador",
   "age": 4,
-  "weight": 28.5
+  "weight": 28.5,
+  "ownerId": 1
 }
+```
+
+Example response:
+
+```json
+{
+  "id": 1,
+  "name": "Max",
+  "breed": "Labrador",
+  "age": 4,
+  "weight": 28.5,
+  "ownerId": 1
+}
+```
+
+### Get an owner and their dog count
+
+```http
+GET /owners/1
+```
+
+```json
+{
+  "id": 1,
+  "name": "Alex Morgan",
+  "dogsCount": 1
+}
+```
+
+### Get an owner’s dogs
+
+```http
+GET /owners/1/dogs
 ```
 
 ### Update a dog
 
-```http
-PATCH /dogs/{id}
-```
-
 Only the fields provided in the request are updated.
 
-Example:
+```http
+PATCH /dogs/1
+Content-Type: application/json
+```
 
 ```json
 {
@@ -93,89 +155,75 @@ Example:
 ### Delete a dog
 
 ```http
-DELETE /dogs/{id}
-```
-
-Example:
-
-```http
 DELETE /dogs/1
 ```
 
-## Validation
+### Delete an owner
 
-The API validates incoming data.
+```http
+DELETE /owners/1
+```
 
-For creating a dog:
+A successful owner deletion returns `204 No Content`. The owner’s dogs are deleted with the owner.
 
-* `name` must not be blank
-* `breed` must not be blank
-* `age` must be 0 or greater
-* `weight` must be greater than 0
+## Validation and errors
 
-For updating a dog:
+When creating a dog:
 
-* `age` must be 0 or greater
-* `weight` must be greater than 0
+- `name` and `breed` must not be blank.
+- `age` must be zero or greater.
+- `weight` must be greater than zero.
+- `ownerId` is required and must refer to an existing owner.
 
-Invalid requests return HTTP `400 Bad Request`.
+When patching a dog:
 
-If a dog with the requested ID does not exist, the API returns HTTP `404 Not Found`.
+- `age`, if provided, must be zero or greater.
+- `weight`, if provided, must be greater than zero.
 
-## Project Structure
+Invalid data returns HTTP `400 Bad Request`. If a requested dog or owner does not exist, the API returns HTTP `404 Not Found`.
+
+## Project structure
 
 ```text
-src/main/java/org/example2/dogsw
-├── DogController.java
-├── DogService.java
-├── DogRepository.java
-├── DogEntity.java
-├── DogDTO.java
-├── PatchingDogDTO.java
+src/main/java/dogs_catalog
+├── controller
+│   ├── DogController.java
+│   └── OwnerController.java
+├── dto
+│   ├── DogDTO.java
+│   ├── OwnerDTO.java
+│   └── PatchingDogDTO.java
+├── entity
+│   ├── DogEntity.java
+│   └── OwnerEntity.java
+├── repository
+│   ├── DogRepository.java
+│   └── OwnerRepository.java
+├── service
+│   ├── DogService.java
+│   └── OwnerService.java
+├── DogswApplication.java
 └── GlobalExceptionHandler.java
 ```
 
 ### Main components
 
-**DogController**
-
-Handles HTTP requests and maps them to service methods.
-
-**DogService**
-
-Contains the main application logic and converts entities to DTOs.
-
-**DogRepository**
-
-Uses Spring Data JPA to communicate with the database.
-
-**DogEntity**
-
-Represents the `Dogs` table in PostgreSQL.
-
-**DogDTO**
-
-Used for creating and returning dog data.
-
-**PatchingDogDTO**
-
-Used for partial updates with `PATCH`.
-
-**GlobalExceptionHandler**
-
-Handles validation errors and requests for non-existent dogs.
+- **Controllers** handle HTTP requests and responses.
+- **Services** contain application logic and map entities to DTOs.
+- **Repositories** use Spring Data JPA to access the database.
+- **Entities** represent the `Dogs` and `Owners` tables.
+- **DTOs** define the data accepted and returned by the API.
+- **GlobalExceptionHandler** handles validation errors and missing resources.
 
 ## Database
 
-The project uses PostgreSQL.
-
-PostgreSQL can be started using Docker Compose:
+The project uses PostgreSQL. Start the database with Docker Compose:
 
 ```bash
 docker compose up -d
 ```
 
-The Docker Compose configuration creates a PostgreSQL database named `postgres` with the following local development configuration:
+The default local development configuration is:
 
 ```text
 Host: localhost
@@ -185,74 +233,38 @@ Username: postgres
 Password: root
 ```
 
-The application uses Hibernate to create and update the database schema automatically.
+Hibernate creates and updates the database schema automatically.
 
-## Running the Project
+## Running the project
 
-### 1. Clone the repository
+1. Clone the repository:
 
-```bash
-git clone https://github.com/RalfsGrinbergs/dog-catalog-api-pet.git
-```
+   ```bash
+   git clone https://github.com/RalfsGrinbergs/dog-catalog-api-pet.git
+   ```
 
-### 2. Open the project
+2. Open the project in IntelliJ IDEA or another Java IDE.
 
-Open the project in IntelliJ IDEA or another Java IDE.
+3. Start PostgreSQL from the project root:
 
-### 3. Start PostgreSQL
+   ```bash
+   docker compose up -d
+   ```
 
-From the project root:
+4. Run the application from the IDE, or use Maven:
 
-```bash
-docker compose up -d
-```
+   ```bash
+   mvn spring-boot:run
+   ```
 
-### 4. Run the application
+   On Windows, if the Maven wrapper is present:
 
-Run the Spring Boot application from the IDE or using Maven:
+   ```bash
+   mvnw.cmd spring-boot:run
+   ```
 
-```bash
-./mvnw spring-boot:run
-```
-
-On Windows:
-
-```bash
-mvnw.cmd spring-boot:run
-```
-
-The API will then be available at:
+The API is available at:
 
 ```text
 http://localhost:8080
-```
-
-## Example
-
-Request:
-
-```http
-POST /dogs
-Content-Type: application/json
-```
-
-```json
-{
-  "name": "Buddy",
-  "breed": "Golden Retriever",
-  "age": 3,
-  "weight": 29.5
-}
-```
-
-Response:
-
-```json
-{
-  "id": 1,
-  "name": "Buddy",
-  "breed": "Golden Retriever",
-  "age": 3,
-  "weight": 29.5
-}
 ```
