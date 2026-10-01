@@ -1,6 +1,7 @@
 package dogs_catalog.service;
 
 import dogs_catalog.entity.OwnerEntity;
+import dogs_catalog.exception.OwnerDogLimitExceededException;
 import dogs_catalog.repository.DogRepository;
 import dogs_catalog.dto.DogDTO;
 import dogs_catalog.dto.PatchingDogDTO;
@@ -35,7 +36,10 @@ return toDomainDogs(dogToFind);
     public DogDTO addDog(DogDTO dogToAdd) {
         OwnerEntity owner = ownerRepository.findById(dogToAdd.ownerId())
                 .orElseThrow(() -> new EntityNotFoundException("There is not owner with that id" + dogToAdd.ownerId()));
+        if(repository.countByOwnerEntity_Id(owner.getId()) >= 5) {
+            throw new OwnerDogLimitExceededException();
 
+        }
         var dogToSave = new DogEntity(
                 dogToAdd.name(),
                 dogToAdd.breed(),
