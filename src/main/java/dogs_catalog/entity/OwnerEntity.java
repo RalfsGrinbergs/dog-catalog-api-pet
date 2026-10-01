@@ -11,7 +11,7 @@ public class OwnerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name")
+
     private String name;
     @OneToMany(mappedBy = "ownerEntity", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<DogEntity> dogEntity = new ArrayList<>(); // i dont want a nullpointer

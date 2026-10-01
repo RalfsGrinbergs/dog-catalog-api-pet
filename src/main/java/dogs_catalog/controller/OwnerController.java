@@ -4,6 +4,7 @@ import dogs_catalog.dto.DogDTO;
 import dogs_catalog.dto.OwnerDTO;
 import dogs_catalog.service.OwnerService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class OwnerController {
     }
     @PostMapping
     public ResponseEntity<OwnerDTO> addOwner(@Valid @RequestBody OwnerDTO ownerToAdd) {
-        return ResponseEntity.status(201)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ownerService.addOwner(ownerToAdd));
 
     }

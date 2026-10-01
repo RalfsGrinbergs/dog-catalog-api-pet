@@ -4,6 +4,7 @@ import dogs_catalog.dto.DogDTO;
 import dogs_catalog.service.DogService;
 import dogs_catalog.dto.PatchingDogDTO;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class DogController {
     private final DogService dogService;
 
+
     public DogController(DogService dogService) {
         this.dogService = dogService;
     }
@@ -23,36 +25,36 @@ public class DogController {
             @RequestParam(required = false) String breed
     ) {
          if(breed != null) {
-             return ResponseEntity.status(200)
-                     .body(dogService.findByBreed(breed));
+             return ResponseEntity.ok(dogService.findByBreed(breed));
+
          }
         return ResponseEntity.ok(dogService.findAll());
 }
     @GetMapping("/{id}")
     public ResponseEntity<DogDTO> findById(@PathVariable("id") Long id) {
 
-        return ResponseEntity.status(200)
-                .body(dogService.findById(id));
+        return ResponseEntity.ok(dogService.findById(id));
+
 
 
     }
 @PostMapping
     public ResponseEntity<DogDTO> addDog(@Valid @RequestBody DogDTO dogToAdd) {
-        return ResponseEntity.status(201)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(dogService.addDog(dogToAdd));
 }
 
 @DeleteMapping("/{id}")
-    public ResponseEntity<DogDTO> deleteDog(@PathVariable("id") Long id) {
-            return ResponseEntity.status(200)
-                    .body(dogService.deleteDog(id));
+    public ResponseEntity<Void> deleteDog(@PathVariable("id") Long id) {
+            dogService.deleteDog(id);
+            return ResponseEntity.noContent().build();
+
 
 }
 @PatchMapping("/{id}")
     public ResponseEntity<DogDTO> updateDog(@PathVariable("id") Long id,
                                                   @Valid  @RequestBody PatchingDogDTO updatingDog) {
-            return ResponseEntity.status(200)
-                    .body(dogService.updateDog(id, updatingDog));
+            return ResponseEntity.ok(dogService.updateDog(id, updatingDog));
 
 
 }

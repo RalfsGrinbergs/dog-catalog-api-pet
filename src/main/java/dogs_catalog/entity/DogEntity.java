@@ -7,15 +7,15 @@ import jakarta.persistence.*;
 public class DogEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+
     private Long id;
-    @Column(name = "name")
+
     private String name;
-    @Column(name = "breed")
+
     private String breed;
-    @Column(name = "age")
+
     private int age;
-    @Column(name = "weight")
+
     private double weight;
     @ManyToOne
     @JoinColumn(name = "OwnerId", referencedColumnName = "id")
